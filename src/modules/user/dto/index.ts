@@ -2,7 +2,7 @@ import { UserType } from 'src/interface'
 
 export class CreateUserDto {
   username: string;
-  uid?: string;
+  uuid?: string;
   userType?: UserType;
   password?: string;
 }
