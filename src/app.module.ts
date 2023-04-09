@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { UserModule } from 'src/modules/user/user.module';
 import { GptModule } from 'src/modules/gpt/gpt.module';
 import { PaymentModule } from 'src/modules/payment/payment.module';
+import { AuthModule } from 'src/modules/auth/auth.module';
 
 import config from './config';
 const { mongodb: { host, port, username, password, database } } = config;
@@ -17,6 +18,7 @@ const { mongodb: { host, port, username, password, database } } = config;
     UserModule,
     GptModule,
     PaymentModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,6 +10,7 @@ import { UserController } from './user.controller';
       { name: 'User', schema: UserSchema }
     ])
   ],
+  exports: [UserService],
   providers: [UserService],
   controllers: [UserController]
 })

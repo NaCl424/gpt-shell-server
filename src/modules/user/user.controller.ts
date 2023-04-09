@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Inject, Body } from '@nestjs/common';
+import { Controller, Get, Post, Inject, Body, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateGuestUserDto } from './dto';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 
 @Controller('api/user')
 export class UserController {
@@ -12,8 +13,9 @@ export class UserController {
     return this.userService.createGuest(createGuestUserDto);
   }
 
-  @Get('user')
-  async user(@Body() data: { id: string }) {
-    return this.userService.findUser(data.id);
+  @UseGuards(JwtAuthGuard)
+  @Get('users')
+  async user() {
+    return this.userService.findAllUsers();
   }
 }

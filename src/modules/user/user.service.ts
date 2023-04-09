@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserDocument } from 'src/schema/user.schema';
+import { User, UserDocument } from 'src/schema/user.schema';
 import { CreateGuestUserDto } from './dto'
 import { UserVo } from './vo';
 import { generateUserId } from 'src/utils';
@@ -15,14 +15,26 @@ export class UserService {
   ) {}
 
   async createGuest(createGuestUserDto: CreateGuestUserDto): Promise<UserVo> {
-    if (!createGuestUserDto.uuid) {
-      createGuestUserDto.uuid = randomUUID();
+    const { uuid: createUUID } = createGuestUserDto;
+    if (!createUUID) {
+      throw new BadRequestException('uuid不能为空!');
     }
+
+    const user = await this.userModel
+      .findOne({ uuid: createUUID })
+      .select(['id', 'username', 'userId', 'nickname', 'uuid', 'userType'])
+      .exec() as UserVo;
+    if (user) {
+      return user;
+    }
+    const createUserId = generateUserId();
     const createUser = new this.userModel({
-      ...createGuestUserDto,
-      userId: generateUserId(),
-      nickname: createGuestUserDto.username,
+      username: `User_${createUserId}`,
+      userId: createUserId,
+      nickname: `User_${createUserId}`,
+      uuid: createUUID,
       userType: UserType.Guest,
+      password: createUserId
     });
     const { _id, username, userId, nickname, uuid, userType } = await createUser.save();
     return {
@@ -43,11 +55,11 @@ export class UserService {
     return users;
   }
 
-  async findUser(sid: string): Promise<UserVo> {
+  async findUser(username: string): Promise<UserVo & { password: string }> {
     const user = await this.userModel
-      .findOne({ _id: sid })
-      .select(['id', 'username', 'userId', 'nickname', 'uuid', 'userType'])
-      .exec() as UserVo;
+      .findOne({ username })
+      .select(['id', 'username', 'userId', 'nickname', 'uuid', 'userType', 'password'])
+      .exec() as UserVo & { password: string };
     return user;
   }
 }
