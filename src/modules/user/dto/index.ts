@@ -1,8 +1,11 @@
 import { UserType } from 'src/interface'
 
-export class CreateUserDto {
+export class CreateGuestUserDto {
   username: string;
   uuid?: string;
-  userType?: UserType;
-  password?: string;
+}
+
+export class LoginDto {
+  username: string;
+  userId: string;
 }

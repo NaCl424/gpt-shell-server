@@ -20,6 +20,9 @@ export class User {
   userId: string;
 
   @Prop({ required: true })
+  nickname: string;
+
+  @Prop({ required: true })
   uuid: string;
 
   @Prop({ default: UserType.Guest })
